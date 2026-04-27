@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OnyxAxis</title>
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --fg: #111;
+    --muted: #888;
+    --sub: #444;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e0e0c;
+      --fg: #ededea;
+      --muted: #777;
+      --sub: #b0b0a8;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* 系统字体栈:无衬线用于正文,衬线用于标题和强调 */
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    --font-serif: "Iowan Old Style", "Apple Garamond", Baskerville, Georgia,
+                  "Times New Roman", "Songti SC", "STSong", "SimSun", serif;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .frame {
+    position: fixed;
+    inset: 32px;
+    border: 1px solid var(--fg);
+    pointer-events: none;
+  }
+
+  .container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 56px 64px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  header .mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  header .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--fg);
+    border-radius: 50%;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 720px;
+  }
+
+  .index {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 48px;
+  }
+
+  h1 em {
+    font-style: italic;
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--fg);
+    max-width: 380px;
+  }
+
+  .link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--fg);
+    text-decoration: none;
+    color: var(--fg);
+    font-size: 0.95rem;
+    transition: padding 0.3s ease;
+  }
+
+  .link:hover {
+    padding-left: 12px;
+  }
+
+  .link .label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .link .num {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .link .arrow {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+  }
+
+  .link:hover .arrow {
+    transform: translateX(6px);
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: end;
+    font-size: 0.75rem;
+  }
+
+  footer .axis {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--fg);
+  }
+
+  @media (max-width: 640px) {
+    .frame { inset: 16px; }
+    .container { padding: 32px 28px; }
+    header { font-size: 0.65rem; }
+  }
+</style>
+
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "wi3kwthcvx");
+</script>
+</head>
+<body>
+  <div class="frame"></div>
+
+  <div class="container">
+    <header>
+      <div class="mark">
+        <span class="dot"></span>
+        <span>OnyxAxis</span>
+      </div>
+    </header>
+
+    <main>
+      <div class="index">— Index</div>
+      <h1>Onyx<em>Axis</em></h1>
+
+      <div class="links">
+        <a class="link" href="http://blog.onyxaxis.org" target="_blank" rel="noopener">
+          <span class="label">
+            <span class="num">01</span>
+            <span>Blog</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="link" href="https://github.com/OnyxAxisOwO" target="_blank" rel="noopener">
+          <span class="label">
+            <span class="num">02</span>
+            <span>GitHub</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+        <a class="link" href="https://t.me/onyxaxis" target="_blank" rel="noopener">
+          <span class="label">
+            <span class="num">03</span>
+            <span>Telegram</span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </main>
+
+    <footer>
+      <span class="axis">y = f(x)</span>
+    </footer>
+  </div>
+</body>
+</html>
