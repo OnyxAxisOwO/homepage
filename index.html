@@ -1,233 +1,711 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>OnyxAxis</title>
-<style>
-  :root {
-    --bg: #f5f3ee;
-    --fg: #111;
-    --muted: #888;
-    --sub: #444;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OnyxAxis — y = f(x)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Space Grotesk (Tech Minimal) & Cormorant Garamond (Serif Elegant) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
 
-  @media (prefers-color-scheme: dark) {
+  <style>
     :root {
-      --bg: #0e0e0c;
-      --fg: #ededea;
-      --muted: #777;
-      --sub: #b0b0a8;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'Space Grotesk', monospace;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --bg: #0c0c0a;
+      --fg: #f4f4f0;
+      --accent: #d4af37; /* Warm metallic hint */
+      --grid-color: rgba(244, 244, 240, 0.05);
+      --axis-color: rgba(244, 244, 240, 0.2);
     }
-  }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    .theme-light {
+      --bg: #f5f3ee;
+      --fg: #121210;
+      --accent: #b8860b;
+      --grid-color: rgba(18, 18, 16, 0.05);
+      --axis-color: rgba(18, 18, 16, 0.2);
+    }
 
-  /* 系统字体栈:无衬线用于正文,衬线用于标题和强调 */
-  :root {
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-    --font-serif: "Iowan Old Style", "Apple Garamond", Baskerville, Georgia,
-                  "Times New Roman", "Songti SC", "STSong", "SimSun", serif;
-  }
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-x: hidden;
+    }
 
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-sans);
-    font-weight: 300;
-    -webkit-font-smoothing: antialiased;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
+    .font-mono-tech {
+      font-family: var(--font-mono);
+    }
 
-  .frame {
-    position: fixed;
-    inset: 32px;
-    border: 1px solid var(--fg);
-    pointer-events: none;
-  }
+    .font-serif-elegant {
+      font-family: var(--font-serif);
+    }
 
-  .container {
-    height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    padding: 56px 64px;
-  }
+    /* Custom elegant scanlines overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        rgba(18, 18, 16, 0) 50%, 
+        rgba(18, 18, 16, 0.15) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 99;
+      opacity: 0.3;
+    }
 
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
+    .theme-light .scanlines {
+      background: linear-gradient(
+        rgba(245, 243, 238, 0) 50%, 
+        rgba(245, 243, 238, 0.1) 50%
+      );
+      background-size: 100% 4px;
+    }
 
-  header .mark {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+    /* Elegant custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--axis-color);
+      border-radius: 2px;
+    }
 
-  header .dot {
-    width: 6px;
-    height: 6px;
-    background: var(--fg);
-    border-radius: 50%;
-  }
+    /* Magnet cursor effect helper */
+    .custom-cursor {
+      width: 8px;
+      height: 8px;
+      background: var(--fg);
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 100;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background-color 0.3s;
+    }
 
-  main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    max-width: 720px;
-  }
+    /* Glow effect on hover */
+    .glow-hover {
+      position: relative;
+    }
+    .glow-hover::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      background: var(--fg);
+      opacity: 0;
+      filter: blur(8px);
+      transition: opacity 0.3s;
+      z-index: -1;
+      border-radius: 4px;
+    }
+    .glow-hover:hover::after {
+      opacity: 0.1;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen selection:bg-neutral-800 selection:text-amber-100 flex flex-col justify-between">
+  <div class="scanlines"></div>
+  <div class="custom-cursor hidden md:block" id="js-cursor"></div>
 
-  .index {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    margin-bottom: 32px;
-  }
+  <!-- Decorative Border Frame -->
+  <div class="fixed inset-4 md:inset-8 border border-[var(--axis-color)] pointer-events-none z-50 transition-colors duration-500">
+    <div class="absolute top-0 left-12 w-[1px] h-full bg-[var(--grid-color)]"></div>
+    <div class="absolute top-12 left-0 w-full h-[1px] bg-[var(--grid-color)]"></div>
+  </div>
 
-  h1 {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: clamp(3.5rem, 9vw, 7rem);
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 48px;
-  }
+  <div class="container mx-auto px-8 md:px-16 py-8 md:py-14 min-h-screen grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+    
+    <!-- Left Column: Core Identity, Links & Theme Control -->
+    <div class="lg:col-span-5 flex flex-col justify-between h-full space-y-12 lg:space-y-0 z-20">
+      
+      <!-- Top Brand Block -->
+      <header class="flex justify-between items-center pt-2">
+        <div class="flex items-center gap-3">
+          <div class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--fg)] opacity-40"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-[var(--fg)]"></span>
+          </div>
+          <span class="font-mono-tech tracking-[0.2em] text-xs uppercase opacity-80">OnyxAxis</span>
+        </div>
+        
+        <!-- Theme Switcher -->
+        <div class="flex items-center gap-4">
+          <button id="theme-toggle" class="p-2 rounded-full border border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" title="Shift Dimension">
+            <i data-lucide="sun" class="w-4 h-4 text-[var(--fg)] hidden theme-dark-icon"></i>
+            <i data-lucide="moon" class="w-4 h-4 text-[var(--fg)] theme-light-icon"></i>
+          </button>
+        </div>
+      </header>
 
-  h1 em {
-    font-style: italic;
-  }
+      <!-- Main Text / Equation Identity -->
+      <main class="my-auto py-8">
+        <div class="font-mono-tech text-[10px] tracking-[0.3em] uppercase text-[var(--fg)] opacity-50 mb-4 flex items-center gap-2">
+          <span>— SYS.COORD.INDEX</span>
+          <span class="w-12 h-[1px] bg-[var(--axis-color)]"></span>
+        </div>
+        <h1 class="font-serif-elegant text-5xl sm:text-7xl lg:text-8xl tracking-tight leading-[0.9] mb-8 select-none">
+          Onyx<span class="italic font-light">Axis</span>
+        </h1>
+        
+        <!-- Preset Formulas (Click to morph canvas) -->
+        <div class="mb-8">
+          <p class="font-mono-tech text-[10px] tracking-[0.15em] opacity-40 uppercase mb-3">Mathematical Archetypes</p>
+          <div class="flex flex-wrap gap-2">
+            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent active" data-formula="sin(x - t) * cos(x * 0.5)">
+              Harmonic Wave
+            </button>
+            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent" data-formula="sin(x * sin(t)) * cos(3 * x + t)">
+              Onyx Crystal
+            </button>
+            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent" data-formula="sin(4 * x - 2 * t) / (1 + x * x)">
+              Quantum Pulse
+            </button>
+            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent" data-formula="abs(sin(x + t)) - 0.5">
+              Spike Threshold
+            </button>
+          </div>
+        </div>
 
-  .links {
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid var(--fg);
-    max-width: 380px;
-  }
+        <!-- Interactive Portal Links with Glitch/Scramble Effect -->
+        <div class="border-t border-[var(--fg)] max-w-sm mt-8 pt-4">
+          <div class="flex flex-col">
+            <!-- Link 01: AI -->
+            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="https://ai.onyxaxis.org" target="_blank" rel="noopener" data-text="AI">
+              <span class="flex items-center gap-4">
+                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">AI</span>
+              </span>
+              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
+            </a>
+            
+            <!-- Link 02: Blog -->
+            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="http://blog.onyxaxis.org" target="_blank" rel="noopener" data-text="Blog">
+              <span class="flex items-center gap-4">
+                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">Blog</span>
+              </span>
+              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
+            </a>
+            
+            <!-- Link 03: GitHub -->
+            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="https://github.com/OnyxAxisOwO" target="_blank" rel="noopener" data-text="GitHub">
+              <span class="flex items-center gap-4">
+                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">GitHub</span>
+              </span>
+              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
+            </a>
+            
+            <!-- Link 04: Telegram -->
+            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="https://t.me/onyxaxis" target="_blank" rel="noopener" data-text="Telegram">
+              <span class="flex items-center gap-4">
+                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">Telegram</span>
+              </span>
+              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
+            </a>
+          </div>
+        </div>
+      </main>
 
-  .link {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--fg);
-    text-decoration: none;
-    color: var(--fg);
-    font-size: 0.95rem;
-    transition: padding 0.3s ease;
-  }
+      <!-- Footer Stats Panel / Terminal Widget -->
+      <footer class="flex flex-col gap-3 border-t border-[var(--axis-color)] pt-4 text-[10px] font-mono-tech tracking-wider opacity-60">
+        <div class="flex justify-between items-center">
+          <span id="coord-display">COORD: (0.000, 0.000)</span>
+          <span class="text-right" id="fps-display">60 FPS // SYSTEM ONLINE</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="font-serif-elegant text-base italic tracking-widest text-[var(--fg)] opacity-100">y = f(x)</span>
+          <span>© ONYAXIS. EST. 2026</span>
+        </div>
+      </footer>
 
-  .link:hover {
-    padding-left: 12px;
-  }
+    </div>
 
-  .link .label {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
+    <!-- Right Column: Interactive Canvas & Mathematical Control Deck -->
+    <div class="lg:col-span-7 flex flex-col justify-between h-full relative border border-[var(--axis-color)] bg-[rgba(18,18,16,0.2)] rounded-lg p-4 md:p-6 backdrop-blur-sm shadow-2xl">
+      
+      <!-- Live Dynamic Coordinate Canvas Card -->
+      <div class="relative w-full flex-grow rounded overflow-hidden flex items-center justify-center min-h-[300px] lg:min-h-0 bg-black/10">
+        
+        <!-- Canvas Element -->
+        <canvas id="axis-canvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
+        
+        <!-- High-tech Floating HUD elements inside Canvas -->
+        <div class="absolute top-4 left-4 bg-black/40 border border-[var(--axis-color)] px-3 py-1.5 rounded text-[10px] font-mono-tech tracking-widest text-[var(--fg)] backdrop-blur-md flex flex-col gap-0.5 pointer-events-none">
+          <div class="flex justify-between gap-4">
+            <span class="opacity-40">DOMAIN:</span>
+            <span>[-5.0, +5.0]</span>
+          </div>
+          <div class="flex justify-between gap-4">
+            <span class="opacity-40">RANGE:</span>
+            <span>[-1.5, +1.5]</span>
+          </div>
+        </div>
 
-  .link .num {
-    font-family: var(--font-serif);
-    font-style: italic;
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
+        <div class="absolute bottom-4 right-4 bg-black/40 border border-[var(--axis-color)] px-3 py-1.5 rounded text-[10px] font-mono-tech tracking-widest text-[var(--fg)] backdrop-blur-md flex items-center gap-2 pointer-events-none">
+          <div class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span>GRID HARMONY DEEPENING</span>
+        </div>
 
-  .link .arrow {
-    font-size: 1.1rem;
-    transition: transform 0.3s ease;
-  }
+        <!-- Glowing Overlay on Hover point -->
+        <div id="canvas-glow-point" class="absolute w-12 h-12 rounded-full border border-amber-400/30 bg-amber-400/5 pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden transition-all duration-75 blur-xs"></div>
+      </div>
 
-  .link:hover .arrow {
-    transform: translateX(6px);
-  }
+      <!-- Real-Time Formula Command Input Box -->
+      <div class="mt-4 border-t border-[var(--axis-color)] pt-4">
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between items-center text-[10px] font-mono-tech tracking-wider opacity-60">
+            <span>DOCK: FORMULA PARSER</span>
+            <span id="syntax-error" class="text-rose-400 hidden">Syntax Error. Reverting.</span>
+            <span id="syntax-success" class="text-emerald-400">Equation compiled successfully</span>
+          </div>
+          
+          <div class="relative flex items-center">
+            <span class="absolute left-4 font-mono-tech text-sm text-[var(--fg)] opacity-50">f(x) = </span>
+            <input 
+              id="formula-input" 
+              type="text" 
+              value="sin(x - t) * cos(x * 0.5)" 
+              class="w-full pl-16 pr-24 py-3 bg-[var(--bg)] border border-[var(--axis-color)] focus:border-[var(--fg)] rounded font-mono-tech text-xs tracking-wider text-[var(--fg)] focus:outline-none transition-all duration-300 shadow-inner"
+              placeholder="e.g. sin(x - t) * cos(3 * x)"
+            />
+            <button 
+              id="execute-formula" 
+              class="absolute right-2 px-3 py-1.5 bg-[var(--fg)] text-[var(--bg)] font-mono-tech text-[10px] uppercase tracking-wider rounded hover:opacity-90 active:scale-95 transition-all duration-200"
+            >
+              PLOT
+            </button>
+          </div>
+          
+          <div class="flex justify-between items-center text-[9px] font-mono-tech tracking-wide opacity-40 px-1">
+            <span>Allowed tokens: x (domain), t (time scalar), sin, cos, tan, abs, PI, pow</span>
+            <span>Press 'ENTER' to compute</span>
+          </div>
+        </div>
+      </div>
 
-  footer {
-    display: flex;
-    justify-content: flex-end;
-    align-items: end;
-    font-size: 0.75rem;
-  }
+    </div>
 
-  footer .axis {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 1rem;
-    color: var(--fg);
-  }
+  </div>
 
-  @media (max-width: 640px) {
-    .frame { inset: 16px; }
-    .container { padding: 32px 28px; }
-    header { font-size: 0.65rem; }
-  }
-</style>
-
-<script type="text/javascript">
+  <!-- Microsoft Clarity Tracking -->
+  <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "wi3kwthcvx");
-</script>
-</head>
-<body>
-  <div class="frame"></div>
+  </script>
 
-  <div class="container">
-    <header>
-      <div class="mark">
-        <span class="dot"></span>
-        <span>OnyxAxis</span>
-      </div>
-    </header>
+  <!-- Core Interactive Script -->
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
 
-    <main>
-      <div class="index">— Index</div>
-      <h1>Onyx<em>Axis</em></h1>
+    // Check system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      body.classList.add('theme-light');
+    }
 
-      <div class="links">
-        <a class="link" href="https://ai.onyxaxis.org" target="_blank" rel="noopener">
-          <span class="label">
-            <span class="num">01</span>
-            <span>AI</span>
-          </span>
-          <span class="arrow">→</span>
-        </a>
-        <a class="link" href="http://blog.onyxaxis.org" target="_blank" rel="noopener">
-          <span class="label">
-            <span class="num">02</span>
-            <span>Blog</span>
-          </span>
-          <span class="arrow">→</span>
-        </a>
-        <a class="link" href="https://github.com/OnyxAxisOwO" target="_blank" rel="noopener">
-          <span class="label">
-            <span class="num">03</span>
-            <span>GitHub</span>
-          </span>
-          <span class="arrow">→</span>
-        </a>
-        <a class="link" href="https://t.me/onyxaxis" target="_blank" rel="noopener">
-          <span class="label">
-            <span class="num">04</span>
-            <span>Telegram</span>
-          </span>
-          <span class="arrow">→</span>
-        </a>
-      </div>
-    </main>
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('theme-light');
+    });
 
-    <footer>
-      <span class="axis">y = f(x)</span>
-    </footer>
-  </div>
+    // Custom Cursor tracking (desktop)
+    const cursor = document.getElementById('js-cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+
+    // Magnetic feedback triggers on links/buttons
+    const hoverables = document.querySelectorAll('a, button, input');
+    hoverables.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '24px';
+        cursor.style.height = '24px';
+        cursor.style.backgroundColor = 'rgba(212, 175, 55, 0.4)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '8px';
+        cursor.style.height = '8px';
+        cursor.style.backgroundColor = 'var(--fg)';
+      });
+    });
+
+    /* =========================================================================
+       CANVAS MATHEMATICAL ENGINE
+       ========================================================================= */
+    const canvas = document.getElementById('axis-canvas');
+    const ctx = canvas.getContext('2d');
+    const coordDisplay = document.getElementById('coord-display');
+    const fpsDisplay = document.getElementById('fps-display');
+    const glowPoint = document.getElementById('canvas-glow-point');
+
+    let t = 0; // Mathematical Time Scalar
+    let formulaString = document.getElementById('formula-input').value;
+    let customFormulaFn = null;
+    let lastFrameTime = performance.now();
+    let fps = 60;
+
+    // Grid properties
+    const domainX = 10; // -5 to +5 range
+    const rangeY = 3;   // -1.5 to +1.5 range
+
+    // Mouse coordinates in Mathematical Space
+    let mathMouseX = 0;
+    let mathMouseY = 0;
+    let isMouseOverCanvas = false;
+
+    // Handle Resize dynamically to protect layout resolution
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      canvas.width = container.clientWidth * window.devicePixelRatio;
+      canvas.height = container.clientHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Map math coordinates (-5, 5) to Canvas relative pixel positions
+    function toCanvasCoords(mx, my) {
+      const w = canvas.width / window.devicePixelRatio;
+      const h = canvas.height / window.devicePixelRatio;
+
+      // Map mx from [-5, 5] to [0, w]
+      const px = ((mx + 5) / domainX) * w;
+      // Map my from [-1.5, 1.5] to [h, 0] (y is inverted in screen space)
+      const py = h - ((my + 1.5) / rangeY) * h;
+
+      return { x: px, y: py };
+    }
+
+    // Map Screen Pixel positions back to Mathematical space coordinates
+    function toMathCoords(px, py) {
+      const w = canvas.width / window.devicePixelRatio;
+      const h = canvas.height / window.devicePixelRatio;
+
+      const mx = (px / w) * domainX - 5;
+      const my = ((h - py) / h) * rangeY - 1.5;
+
+      return { x: mx, y: my };
+    }
+
+    // Safe mathematical evaluation compiler
+    function compileFormula(rawStr) {
+      // Sanitize inputs and parse mathematical shorthand to valid JS
+      let processed = rawStr
+        .replace(/sin/g, 'Math.sin')
+        .replace(/cos/g, 'Math.cos')
+        .replace(/tan/g, 'Math.tan')
+        .replace(/abs/g, 'Math.abs')
+        .replace(/PI/g, 'Math.PI')
+        .replace(/pow/g, 'Math.pow')
+        .replace(/sqrt/g, 'Math.sqrt');
+
+      try {
+        // Create an explicit sandbox execution mathematical function
+        const fn = new Function('x', 't', `try { return ${processed}; } catch(e) { return 0; }`);
+        // Test compile run
+        const test = fn(1, 1);
+        if (isNaN(test)) throw new Error("Resulting value is NaN");
+        
+        document.getElementById('syntax-error').classList.add('hidden');
+        document.getElementById('syntax-success').classList.remove('hidden');
+        return fn;
+      } catch (err) {
+        document.getElementById('syntax-error').classList.remove('hidden');
+        document.getElementById('syntax-success').classList.add('hidden');
+        return null;
+      }
+    }
+
+    // Initialize custom formula compile
+    customFormulaFn = compileFormula(formulaString);
+
+    // Watch Preset buttons morphing
+    const presetButtons = document.querySelectorAll('.preset-btn');
+    presetButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        presetButtons.forEach(b => b.classList.remove('border-amber-400', 'active'));
+        btn.classList.add('border-amber-400', 'active');
+        const targetFormula = btn.getAttribute('data-formula');
+        document.getElementById('formula-input').value = targetFormula;
+
+        const compiled = compileFormula(targetFormula);
+        if (compiled) customFormulaFn = compiled;
+      });
+    });
+
+    // Execute custom formula inputs
+    document.getElementById('execute-formula').addEventListener('click', () => {
+      const val = document.getElementById('formula-input').value;
+      const compiled = compileFormula(val);
+      if (compiled) customFormulaFn = compiled;
+    });
+
+    document.getElementById('formula-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const val = document.getElementById('formula-input').value;
+        const compiled = compileFormula(val);
+        if (compiled) customFormulaFn = compiled;
+      }
+    });
+
+    // Tracking Mouse across grid
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.clientX - rect.left;
+      const clientY = e.clientY - rect.top;
+
+      const math = toMathCoords(clientX, clientY);
+      mathMouseX = math.x;
+      mathMouseY = math.y;
+      isMouseOverCanvas = true;
+
+      // Update interactive HTML Glow tracker
+      glowPoint.style.left = `${clientX}px`;
+      glowPoint.style.top = `${clientY}px`;
+      glowPoint.classList.remove('hidden');
+
+      // Coordinate Display readouts
+      coordDisplay.innerText = `COORD: (${mathMouseX.toFixed(3)}, ${mathMouseY.toFixed(3)})`;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      isMouseOverCanvas = false;
+      glowPoint.classList.add('hidden');
+      coordDisplay.innerText = `COORD: (0.000, 0.000)`;
+    });
+
+    // Mobile Dynamic Touch Vector adaptation
+    canvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches[0].clientX - rect.left;
+        const clientY = e.touches[0].clientY - rect.top;
+        const math = toMathCoords(clientX, clientY);
+        mathMouseX = math.x;
+        mathMouseY = math.y;
+        isMouseOverCanvas = true;
+        coordDisplay.innerText = `COORD: (${mathMouseX.toFixed(3)}, ${mathMouseY.toFixed(3)})`;
+      }
+    }, { passive: true });
+
+    /* =========================================================================
+       MAIN PHYSICS & ANIMATION LOOP
+       ========================================================================= */
+    function animate() {
+      const w = canvas.width / window.devicePixelRatio;
+      const h = canvas.height / window.devicePixelRatio;
+
+      // Clear Screen with extremely slight trace persistence for smooth motions
+      const themeLight = body.classList.contains('theme-light');
+      ctx.fillStyle = themeLight ? 'rgba(245, 243, 238, 0.85)' : 'rgba(12, 12, 10, 0.85)';
+      ctx.fillRect(0, 0, w, h);
+
+      // Core Dynamic Grid Drawing Engine
+      const gridStyles = getComputedStyle(document.documentElement);
+      const gridColor = gridStyles.getPropertyValue('--grid-color').trim();
+      const axisColor = gridStyles.getPropertyValue('--axis-color').trim();
+      const fgColor = gridStyles.getPropertyValue('--fg').trim();
+
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+
+      // Generate fine Cartesian vertical subgrid lines
+      for (let i = -5; i <= 5; i += 0.5) {
+        const p = toCanvasCoords(i, 0);
+        ctx.beginPath();
+        ctx.moveTo(p.x, 0);
+        ctx.lineTo(p.x, h);
+        ctx.stroke();
+      }
+
+      // Generate fine Cartesian horizontal subgrid lines
+      for (let i = -1.5; i <= 1.5; i += 0.25) {
+        const p = toCanvasCoords(0, i);
+        ctx.beginPath();
+        ctx.moveTo(0, p.y);
+        ctx.lineTo(w, p.y);
+        ctx.stroke();
+      }
+
+      // Main Axis Origin lines
+      ctx.strokeStyle = axisColor;
+      ctx.lineWidth = 1.5;
+
+      // X-Axis
+      const origin = toCanvasCoords(0, 0);
+      ctx.beginPath();
+      ctx.moveTo(0, origin.y);
+      ctx.lineTo(w, origin.y);
+      ctx.stroke();
+
+      // Y-Axis
+      ctx.beginPath();
+      ctx.moveTo(origin.x, 0);
+      ctx.lineTo(origin.x, h);
+      ctx.stroke();
+
+      // Plot dynamic mathematical curves
+      if (customFormulaFn) {
+        ctx.beginPath();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = themeLight ? '#121210' : '#ffffff';
+
+        let firstPoint = true;
+        
+        // Sampling dense geometric increments for ultra-high-resolution lines
+        for (let mx = -5; mx <= 5; mx += 0.02) {
+          try {
+            const my = customFormulaFn(mx, t);
+            if (!isNaN(my) && isFinite(my)) {
+              const canvasPos = toCanvasCoords(mx, my);
+              if (firstPoint) {
+                ctx.moveTo(canvasPos.x, canvasPos.y);
+                firstPoint = false;
+              } else {
+                ctx.lineTo(canvasPos.x, canvasPos.y);
+              }
+            }
+          } catch(e) {}
+        }
+        ctx.stroke();
+
+        // Compute intersecting hover tracking nodes
+        if (isMouseOverCanvas) {
+          try {
+            const trackingY = customFormulaFn(mathMouseX, t);
+            const targetPos = toCanvasCoords(mathMouseX, trackingY);
+
+            // Glowing Tracking Orb
+            ctx.fillStyle = themeLight ? '#b8860b' : '#f59e0b';
+            ctx.beginPath();
+            ctx.arc(targetPos.x, targetPos.y, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Trace dashed helper axis lines directly back to origin
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+            ctx.setLineDash([4, 4]);
+            ctx.lineWidth = 1;
+            
+            ctx.beginPath();
+            ctx.moveTo(targetPos.x, targetPos.y);
+            ctx.lineTo(targetPos.x, origin.y);
+            ctx.moveTo(targetPos.x, targetPos.y);
+            ctx.lineTo(origin.x, targetPos.y);
+            ctx.stroke();
+            ctx.setLineDash([]); // reset dash
+          } catch(e) {}
+        }
+      }
+
+      // Dynamic Mathematical Time step
+      t += 0.02;
+
+      // Calculate Performance Stats
+      const now = performance.now();
+      fps = Math.round(1000 / (now - lastFrameTime));
+      lastFrameTime = now;
+      if (Math.random() < 0.05) { // Slow down display updates for steady legibility
+        fpsDisplay.innerText = `${fps} FPS // SYSTEM ACTIVE`;
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // Trigger on Load
+    window.onload = function () {
+      animate();
+      lucide.createIcons();
+    };
+
+    /* =========================================================================
+       TEXT SCRAMBLE ANIMATION (For personalized high-end portal identity)
+       ========================================================================= */
+    class TextScrambler {
+      constructor(el) {
+        this.el = el;
+        this.chars = '!<>-_\\/[]{}—=+*^?#________';
+        this.update = this.update.bind(this);
+      }
+      setText(newText) {
+        this.oldText = this.el.innerText;
+        this.newText = newText;
+        this.promise = new Promise((resolve) => this.resolve = resolve);
+        this.queue = [];
+        for (let i = 0; i < this.newText.length; i++) {
+          const from = this.oldText[i] || '';
+          const to = this.newText[i] || '';
+          const start = Math.floor(Math.random() * 10);
+          const end = start + Math.floor(Math.random() * 15);
+          this.queue.push({ from, to, start, end, char: '' });
+        }
+        cancelAnimationFrame(this.frameId);
+        this.frame = 0;
+        this.update();
+        return this.promise;
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+          let { from, to, start, end, char } = this.queue[i];
+          if (this.frame >= end) {
+            complete++;
+            output += to;
+          } else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) {
+              char = this.randomChar();
+              this.queue[i].char = char;
+            }
+            output += `<span class="opacity-70 text-amber-500">${char}</span>`;
+          } else {
+            output += from;
+          }
+        }
+        this.el.innerHTML = output;
+        if (complete === this.queue.length) {
+          this.resolve();
+        } else {
+          this.frameId = requestAnimationFrame(this.update);
+          this.frame++;
+        }
+      }
+      randomChar() {
+        return this.chars[Math.floor(Math.random() * this.chars.length)];
+      }
+    }
+
+    // Apply the scramble effect to portal links
+    document.querySelectorAll('.scramble-link').forEach(link => {
+      const label = link.querySelector('.link-label');
+      const originalText = label.innerText;
+      const hoverText = link.getAttribute('data-text');
+      const scrambler = new TextScrambler(label);
+
+      link.addEventListener('mouseenter', () => {
+        scrambler.setText(hoverText);
+      });
+
+      link.addEventListener('mouseleave', () => {
+        scrambler.setText(originalText);
+      });
+    });
+
+  </script>
 </body>
 </html>
