@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OnyxAxis</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts Chinese Mirror (Loli.net - Extremely fast in mainland China) -->
   <link rel="preconnect" href="https://fonts.loli.net">
   <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
   <link href="https://fonts.loli.net/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
@@ -126,7 +124,6 @@
   <div class="scanlines"></div>
   <div class="custom-cursor hidden md:block" id="js-cursor"></div>
 
-  <!-- Decorative Outer Border Frame -->
   <div class="fixed inset-4 md:inset-8 border border-[var(--axis-color)] pointer-events-none z-50 transition-colors duration-500">
     <div class="absolute top-0 left-12 w-[1px] h-full bg-[var(--grid-color)]"></div>
     <div class="absolute top-12 left-0 w-full h-[1px] bg-[var(--grid-color)]"></div>
@@ -134,13 +131,10 @@
 
   <div class="container mx-auto px-6 md:px-16 py-8 md:py-14 min-h-screen grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative z-10">
     
-    <!-- Left Column: Identity Card, Quick Links & Status -->
     <div class="lg:col-span-5 flex flex-col justify-between h-full space-y-12 lg:space-y-0 z-20">
       
-      <!-- Top Brand Header Block -->
       <header class="flex justify-between items-center pt-2">
         <div class="flex items-center gap-3">
-          <!-- Pulse Status Orb -->
           <div class="relative flex h-2.5 w-2.5">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--fg)] opacity-40"></span>
             <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--fg)]"></span>
@@ -148,23 +142,17 @@
           <span class="font-mono-tech tracking-[0.25em] text-[11px] uppercase opacity-75 font-medium">OnyxAxis</span>
         </div>
         
-        <!-- Dimension Switcher (Light/Dark Theme) -->
         <button id="theme-toggle" class="p-2 rounded-full border border-[var(--axis-color)] hover:border-[var(--fg)] hover:scale-105 transition-all duration-300" title="Shift Interface Dimension">
-          <!-- Inline SVG: Sun -->
           <svg class="w-3.5 h-3.5 text-[var(--fg)] hidden theme-dark-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
-          <!-- Inline SVG: Moon -->
           <svg class="w-3.5 h-3.5 text-[var(--fg)] theme-light-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
         </button>
       </header>
 
-      <!-- Main Bio Section -->
       <div class="my-auto py-6 lg:py-12">
-        <!-- Avatar Wrapper with subtle glow and borders -->
         <div class="relative w-20 h-20 mb-8 group">
           <div class="absolute inset-0 rounded-full border border-[var(--axis-color)] scale-110 group-hover:scale-125 transition-transform duration-500"></div>
           <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/10 to-transparent blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div class="w-full h-full rounded-full overflow-hidden border border-[var(--fg)] bg-neutral-900 flex items-center justify-center relative">
-            <!-- Main Avatar Image -->
             <img 
               id="user-avatar"
               src="https://onyxaxis.org/avatar.jpg" 
@@ -172,7 +160,6 @@
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               onerror="this.style.display='none'; document.getElementById('avatar-fallback').classList.remove('hidden');"
             />
-            <!-- Fallback SVG Avatar Monogram -->
             <div id="avatar-fallback" class="hidden w-full h-full flex items-center justify-center bg-neutral-900 text-[#f4f4f0] font-serif-elegant italic text-2xl">
               OA
             </div>
@@ -192,7 +179,6 @@
           探索极简界面、实用开源工具与自主实验。这里汇集了我们的主要项目入口与技术积累。
         </p>
 
-        <!-- Dynamic Connections Space Node Visualizer Panel (Compact) -->
         <div class="relative w-full h-32 rounded-lg border border-[var(--axis-color)] overflow-hidden bg-black/5 flex items-center justify-center mb-10 group">
           <canvas id="ambient-canvas" class="absolute inset-0 w-full h-full pointer-events-auto opacity-70 group-hover:opacity-100 transition-opacity duration-500"></canvas>
           <div class="absolute bottom-2.5 left-3.5 flex items-center gap-2 pointer-events-none">
@@ -201,12 +187,10 @@
           </div>
         </div>
 
-        <!-- Major Portal Core Controls -->
         <div class="flex flex-col gap-2 max-w-sm">
           <div class="font-mono-tech text-[9px] tracking-[0.2em] opacity-40 uppercase mb-1">Navigation Terminals</div>
           
           <div class="grid grid-cols-3 gap-2.5">
-            <!-- Button 1: Blog -->
             <a 
               href="http://blog.onyxaxis.org" 
               target="_blank" 
@@ -214,12 +198,10 @@
               class="scramble-link group flex flex-col items-center justify-center py-3.5 px-2 border border-[var(--axis-color)] hover:border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] rounded transition-all duration-300"
               data-text="BLOG"
             >
-              <!-- Inline SVG: Book Open -->
               <svg class="w-4 h-4 mb-1.5 opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
               <span class="font-mono-tech text-[10px] tracking-wider font-semibold link-label">Blog</span>
             </a>
 
-            <!-- Button 2: GitHub -->
             <a 
               href="https://github.com/OnyxAxisOwO" 
               target="_blank" 
@@ -227,7 +209,6 @@
               class="scramble-link group flex flex-col items-center justify-center py-3.5 px-2 border border-[var(--axis-color)] hover:border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] rounded transition-all duration-300"
               data-text="GITHUB"
             >
-              <!-- Inline SVG: GitHub -->
               <svg class="w-4 h-4 mb-1.5 opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
                 <path d="M9 18c-4.51 2-5-2-7-2"></path>
@@ -235,7 +216,6 @@
               <span class="font-mono-tech text-[10px] tracking-wider font-semibold link-label">GitHub</span>
             </a>
 
-            <!-- Button 3: Telegram -->
             <a 
               href="https://t.me/onyxaxis" 
               target="_blank" 
@@ -243,7 +223,6 @@
               class="scramble-link group flex flex-col items-center justify-center py-3.5 px-2 border border-[var(--axis-color)] hover:border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] rounded transition-all duration-300"
               data-text="TELEGRAM"
             >
-              <!-- Inline SVG: Send (Telegram) -->
               <svg class="w-4 h-4 mb-1.5 opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               <span class="font-mono-tech text-[10px] tracking-wider font-semibold link-label">Telegram</span>
             </a>
@@ -251,7 +230,6 @@
         </div>
       </div>
 
-      <!-- Footer Telemetry -->
       <footer class="flex flex-col gap-2.5 border-t border-[var(--axis-color)] pt-4 text-[9px] font-mono-tech tracking-wider opacity-50">
         <div class="flex justify-between items-center">
           <span id="time-display">SYS.TIME: 15:14:00 UTC</span>
@@ -265,13 +243,10 @@
 
     </div>
 
-    <!-- Right Column: Projects Deck (我的项目) -->
     <div class="lg:col-span-7 flex flex-col h-full justify-between z-20">
       
-      <!-- List Container Header -->
       <div class="flex items-center justify-between border-b border-[var(--axis-color)] pb-3 mb-6">
         <div class="flex items-center gap-3">
-          <!-- Inline SVG: Folder Git 2 -->
           <svg class="w-4 h-4 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v5"></path><circle cx="13" cy="12" r="2"></circle><path d="M18 19c-2.2 0-3-1.7-3-1.7"></path><circle cx="20" cy="19" r="2"></circle></svg>
           <h2 class="font-mono-tech text-xs tracking-[0.25em] uppercase font-semibold text-[var(--fg)]">
             我的项目 // Projects
@@ -280,10 +255,8 @@
         <span class="font-mono-tech text-[10px] opacity-40">5 ACTIVE NODES</span>
       </div>
 
-      <!-- Project Cards Stack -->
       <div class="flex-grow space-y-4 overflow-y-auto pr-1 max-h-[72vh] lg:max-h-none">
         
-        <!-- Project 1: OnyxAxis AI -->
         <a 
           href="https://ai.onyxaxis.ai" 
           target="_blank" 
@@ -292,8 +265,7 @@
         >
           <div class="flex justify-between items-start gap-4 mb-2">
             <div class="flex items-center gap-3">
-              <div class="p-2 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500">
-                <!-- Inline SVG: Sparkles -->
+              <div class="p-2 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 [.theme-light_&]:bg-amber-600/10 [.theme-light_&]:border-amber-600/20 [.theme-light_&]:text-amber-700">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5 5 3Z"></path><path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z"></path></svg>
               </div>
               <h3 class="font-mono-tech text-sm font-semibold tracking-wide">OnyxAxis AI</h3>
@@ -301,7 +273,7 @@
             <span class="text-xs font-mono-tech opacity-30 group-hover:opacity-100 transition-opacity">ai.onyxaxis.ai ↗</span>
           </div>
           <div class="space-y-2 pl-11">
-            <p class="text-[10px] font-mono-tech tracking-wider opacity-55 text-amber-500/80">
+            <p class="text-[10px] font-mono-tech tracking-wider opacity-55 text-amber-500/80 [.theme-light_&]:text-amber-800 [.theme-light_&]:opacity-90 [.theme-light_&]:font-medium">
               Claude Opus 4.8 · GPT-5.5 · Gemini 3.1 Pro
             </p>
             <p class="text-xs text-[var(--fg)] opacity-70 font-light leading-relaxed">
@@ -310,7 +282,6 @@
           </div>
         </a>
 
-        <!-- Project 2: Bouncer -->
         <a 
           href="https://bouncer-webui.pages.dev" 
           target="_blank" 
@@ -320,7 +291,6 @@
           <div class="flex justify-between items-start gap-4 mb-2">
             <div class="flex items-center gap-3">
               <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
-                <!-- Inline SVG: Shield Check -->
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
               </div>
               <h3 class="font-mono-tech text-sm font-semibold tracking-wide">Bouncer</h3>
@@ -334,7 +304,6 @@
           </div>
         </a>
 
-        <!-- Project 3: Veiled -->
         <a 
           href="https://github.com/OnyxAxisOwO/Veiled" 
           target="_blank" 
@@ -344,7 +313,6 @@
           <div class="flex justify-between items-start gap-4 mb-2">
             <div class="flex items-center gap-3">
               <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
-                <!-- Inline SVG: Eye Off -->
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
               </div>
               <h3 class="font-mono-tech text-sm font-semibold tracking-wide">Veiled</h3>
@@ -358,7 +326,6 @@
           </div>
         </a>
 
-        <!-- Project 4: PageDye -->
         <a 
           href="https://github.com/OnyxAxisOwO/PageDye" 
           target="_blank" 
@@ -368,7 +335,6 @@
           <div class="flex justify-between items-start gap-4 mb-2">
             <div class="flex items-center gap-3">
               <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
-                <!-- Inline SVG: Palette -->
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.3441 19.4855 5.22857 20.3019 4.85857 20.8586C4.42857 21.5019 3.5 21.5 3 22H12Z"></path><circle cx="7.5" cy="10.5" r="1.5"></circle><circle cx="11.5" cy="7.5" r="1.5"></circle><circle cx="16.5" cy="9.5" r="1.5"></circle><circle cx="15.5" cy="14.5" r="1.5"></circle></svg>
               </div>
               <h3 class="font-mono-tech text-sm font-semibold tracking-wide">PageDye</h3>
@@ -382,7 +348,6 @@
           </div>
         </a>
 
-        <!-- Project 5: ImmersiveProxy -->
         <a 
           href="https://github.com/OnyxAxisOwO/ImmersiveProxy" 
           target="_blank" 
@@ -392,7 +357,6 @@
           <div class="flex justify-between items-start gap-4 mb-2">
             <div class="flex items-center gap-3">
               <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
-                <!-- Inline SVG: Languages -->
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"></path><path d="m4 14 6-6 2-3"></path><path d="M2 5h12"></path><path d="M7 2h1"></path><path d="m22 22-5-10-5 10"></path><path d="M14 18h6"></path></svg>
               </div>
               <h3 class="font-mono-tech text-sm font-semibold tracking-wide">ImmersiveProxy</h3>
@@ -412,7 +376,6 @@
 
   </div>
 
-  <!-- Microsoft Clarity Tracking -->
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -421,7 +384,6 @@
     })(window, document, "clarity", "script", "wi3kwthcvx");
   </script>
 
-  <!-- Portal Core Javascript Engine -->
   <script>
     // Theme Management
     const themeToggle = document.getElementById('theme-toggle');
@@ -599,11 +561,14 @@
 
       // Calculate simple FPS and update digital UTC Clock
       const now = performance.now();
-      fps = Math.round(1000 / (now - lastTime));
+      const currentFps = Math.round(1000 / (now - lastTime));
       lastTime = now;
       
+      // Smooth out FPS jumps slightly
+      fps = fps * 0.9 + currentFps * 0.1;
+      
       if (Math.random() < 0.03) {
-        fpsDisplay.innerText = `${fps} FPS // SYSTEM ACTIVE`;
+        fpsDisplay.innerText = `${Math.round(fps)} FPS // SYSTEM ACTIVE`;
         updateTimeDisplay();
       }
 
