@@ -6,12 +6,10 @@
   <title>OnyxAxis</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Google Fonts: Space Grotesk (Tech Minimal) & Cormorant Garamond (Serif Elegant) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <!-- Google Fonts Chinese Mirror (Loli.net - Extremely fast in mainland China) -->
+  <link rel="preconnect" href="https://fonts.loli.net">
+  <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
+  <link href="https://fonts.loli.net/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -20,17 +18,21 @@
       --font-serif: 'Cormorant Garamond', Georgia, serif;
       --bg: #0c0c0a;
       --fg: #f4f4f0;
-      --accent: #d4af37; /* Warm metallic hint */
-      --grid-color: rgba(244, 244, 240, 0.05);
-      --axis-color: rgba(244, 244, 240, 0.2);
+      --accent: #d4af37; /* Warm gold tint */
+      --grid-color: rgba(244, 244, 240, 0.04);
+      --axis-color: rgba(244, 244, 240, 0.12);
+      --card-bg: rgba(20, 20, 18, 0.6);
+      --card-border: rgba(244, 244, 240, 0.08);
     }
 
     .theme-light {
       --bg: #f5f3ee;
       --fg: #121210;
       --accent: #b8860b;
-      --grid-color: rgba(18, 18, 16, 0.05);
-      --axis-color: rgba(18, 18, 16, 0.2);
+      --grid-color: rgba(18, 18, 16, 0.04);
+      --axis-color: rgba(18, 18, 16, 0.12);
+      --card-bg: rgba(238, 235, 228, 0.6);
+      --card-border: rgba(18, 18, 16, 0.08);
     }
 
     body {
@@ -49,29 +51,29 @@
       font-family: var(--font-serif);
     }
 
-    /* Custom elegant scanlines overlay */
+    /* Elegant subtle scanlines overlay */
     .scanlines {
       position: fixed;
       inset: 0;
       pointer-events: none;
       background: linear-gradient(
         rgba(18, 18, 16, 0) 50%, 
-        rgba(18, 18, 16, 0.15) 50%
+        rgba(18, 18, 16, 0.08) 50%
       );
       background-size: 100% 4px;
       z-index: 99;
-      opacity: 0.3;
+      opacity: 0.25;
     }
 
     .theme-light .scanlines {
       background: linear-gradient(
         rgba(245, 243, 238, 0) 50%, 
-        rgba(245, 243, 238, 0.1) 50%
+        rgba(245, 243, 238, 0.06) 50%
       );
       background-size: 100% 4px;
     }
 
-    /* Elegant custom scrollbar */
+    /* Smooth Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 4px;
       height: 4px;
@@ -83,37 +85,40 @@
       background: var(--axis-color);
       border-radius: 2px;
     }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--fg);
+    }
 
-    /* Magnet cursor effect helper */
+    /* Floating feedback pointer */
     .custom-cursor {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       background: var(--fg);
       position: fixed;
       border-radius: 50%;
       pointer-events: none;
       z-index: 100;
       transform: translate(-50%, -50%);
-      transition: width 0.2s, height 0.2s, background-color 0.3s;
+      transition: width 0.25s, height 0.25s, background-color 0.3s;
     }
 
-    /* Glow effect on hover */
-    .glow-hover {
-      position: relative;
+    /* High-end decorative box frame shadows */
+    .premium-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .glow-hover::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      background: var(--fg);
-      opacity: 0;
-      filter: blur(8px);
-      transition: opacity 0.3s;
-      z-index: -1;
-      border-radius: 4px;
+
+    .premium-panel:hover {
+      border-color: rgba(212, 175, 55, 0.25);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
     }
-    .glow-hover:hover::after {
-      opacity: 0.1;
+
+    .theme-light .premium-panel:hover {
+      border-color: rgba(184, 134, 11, 0.2);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
     }
   </style>
 </head>
@@ -121,178 +126,286 @@
   <div class="scanlines"></div>
   <div class="custom-cursor hidden md:block" id="js-cursor"></div>
 
-  <!-- Decorative Border Frame -->
+  <!-- Decorative Outer Border Frame -->
   <div class="fixed inset-4 md:inset-8 border border-[var(--axis-color)] pointer-events-none z-50 transition-colors duration-500">
     <div class="absolute top-0 left-12 w-[1px] h-full bg-[var(--grid-color)]"></div>
     <div class="absolute top-12 left-0 w-full h-[1px] bg-[var(--grid-color)]"></div>
   </div>
 
-  <div class="container mx-auto px-8 md:px-16 py-8 md:py-14 min-h-screen grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+  <div class="container mx-auto px-6 md:px-16 py-8 md:py-14 min-h-screen grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative z-10">
     
-    <!-- Left Column: Core Identity, Links & Theme Control -->
+    <!-- Left Column: Identity Card, Quick Links & Status -->
     <div class="lg:col-span-5 flex flex-col justify-between h-full space-y-12 lg:space-y-0 z-20">
       
-      <!-- Top Brand Block -->
+      <!-- Top Brand Header Block -->
       <header class="flex justify-between items-center pt-2">
         <div class="flex items-center gap-3">
-          <div class="relative flex h-3 w-3">
+          <!-- Pulse Status Orb -->
+          <div class="relative flex h-2.5 w-2.5">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--fg)] opacity-40"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-[var(--fg)]"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--fg)]"></span>
           </div>
-          <span class="font-mono-tech tracking-[0.2em] text-xs uppercase opacity-80">OnyxAxis</span>
+          <span class="font-mono-tech tracking-[0.25em] text-[11px] uppercase opacity-75 font-medium">OnyxAxis</span>
         </div>
         
-        <!-- Theme Switcher -->
-        <div class="flex items-center gap-4">
-          <button id="theme-toggle" class="p-2 rounded-full border border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" title="Shift Dimension">
-            <i data-lucide="sun" class="w-4 h-4 text-[var(--fg)] hidden theme-dark-icon"></i>
-            <i data-lucide="moon" class="w-4 h-4 text-[var(--fg)] theme-light-icon"></i>
-          </button>
-        </div>
+        <!-- Dimension Switcher (Light/Dark Theme) -->
+        <button id="theme-toggle" class="p-2 rounded-full border border-[var(--axis-color)] hover:border-[var(--fg)] hover:scale-105 transition-all duration-300" title="Shift Interface Dimension">
+          <!-- Inline SVG: Sun -->
+          <svg class="w-3.5 h-3.5 text-[var(--fg)] hidden theme-dark-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+          <!-- Inline SVG: Moon -->
+          <svg class="w-3.5 h-3.5 text-[var(--fg)] theme-light-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+        </button>
       </header>
 
-      <!-- Main Text / Equation Identity -->
-      <main class="my-auto py-8">
-        <div class="font-mono-tech text-[10px] tracking-[0.3em] uppercase text-[var(--fg)] opacity-50 mb-4 flex items-center gap-2">
-          <span>— SYS.COORD.INDEX</span>
-          <span class="w-12 h-[1px] bg-[var(--axis-color)]"></span>
+      <!-- Main Bio Section -->
+      <div class="my-auto py-6 lg:py-12">
+        <!-- Avatar Wrapper with subtle glow and borders -->
+        <div class="relative w-20 h-20 mb-8 group">
+          <div class="absolute inset-0 rounded-full border border-[var(--axis-color)] scale-110 group-hover:scale-125 transition-transform duration-500"></div>
+          <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/10 to-transparent blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="w-full h-full rounded-full overflow-hidden border border-[var(--fg)] bg-neutral-900 flex items-center justify-center relative">
+            <!-- Main Avatar Image -->
+            <img 
+              id="user-avatar"
+              src="https://onyxaxis.org/avatar.jpg" 
+              alt="OnyxAxis Avatar" 
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              onerror="this.style.display='none'; document.getElementById('avatar-fallback').classList.remove('hidden');"
+            />
+            <!-- Fallback SVG Avatar Monogram -->
+            <div id="avatar-fallback" class="hidden w-full h-full flex items-center justify-center bg-neutral-900 text-[#f4f4f0] font-serif-elegant italic text-2xl">
+              OA
+            </div>
+          </div>
         </div>
-        <h1 class="font-serif-elegant text-5xl sm:text-7xl lg:text-8xl tracking-tight leading-[0.9] mb-8 select-none">
+
+        <div class="font-mono-tech text-[9px] tracking-[0.3em] uppercase text-[var(--fg)] opacity-45 mb-3 flex items-center gap-2">
+          <span>IDENTITY SYSTEM</span>
+          <span class="w-8 h-[1px] bg-[var(--axis-color)]"></span>
+        </div>
+        
+        <h1 class="font-serif-elegant text-5xl sm:text-6xl lg:text-7xl tracking-tight leading-[0.95] mb-6 select-none">
           Onyx<span class="italic font-light">Axis</span>
         </h1>
         
-        <!-- Preset Formulas (Click to morph canvas) -->
-        <div class="mb-8">
-          <p class="font-mono-tech text-[10px] tracking-[0.15em] opacity-40 uppercase mb-3">Mathematical Archetypes</p>
-          <div class="flex flex-wrap gap-2">
-            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent active" data-formula="sin(x - t) * cos(x * 0.5)">
-              Harmonic Wave
-            </button>
-            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent" data-formula="sin(x * sin(t)) * cos(3 * x + t)">
-              Onyx Crystal
-            </button>
-            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent" data-formula="sin(4 * x - 2 * t) / (1 + x * x)">
-              Quantum Pulse
-            </button>
-            <button class="preset-btn px-3 py-1 rounded border border-[var(--axis-color)] hover:border-[var(--fg)] text-xs font-mono-tech transition-all duration-300 bg-transparent" data-formula="abs(sin(x + t)) - 0.5">
-              Spike Threshold
-            </button>
+        <p class="text-sm font-light text-[var(--fg)] opacity-70 max-w-sm leading-relaxed mb-8">
+          探索极简界面、实用开源工具与自主实验。这里汇集了我们的主要项目入口与技术积累。
+        </p>
+
+        <!-- Dynamic Connections Space Node Visualizer Panel (Compact) -->
+        <div class="relative w-full h-32 rounded-lg border border-[var(--axis-color)] overflow-hidden bg-black/5 flex items-center justify-center mb-10 group">
+          <canvas id="ambient-canvas" class="absolute inset-0 w-full h-full pointer-events-auto opacity-70 group-hover:opacity-100 transition-opacity duration-500"></canvas>
+          <div class="absolute bottom-2.5 left-3.5 flex items-center gap-2 pointer-events-none">
+            <span class="h-1 w-1 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-mono-tech text-[8px] tracking-widest opacity-40 uppercase">Interactive Axis Web</span>
           </div>
         </div>
 
-        <!-- Interactive Portal Links with Glitch/Scramble Effect -->
-        <div class="border-t border-[var(--fg)] max-w-sm mt-8 pt-4">
-          <div class="flex flex-col">
-            <!-- Link 01: AI -->
-            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="https://ai.onyxaxis.org" target="_blank" rel="noopener" data-text="AI">
-              <span class="flex items-center gap-4">
-                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">AI</span>
-              </span>
-              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
+        <!-- Major Portal Core Controls -->
+        <div class="flex flex-col gap-2 max-w-sm">
+          <div class="font-mono-tech text-[9px] tracking-[0.2em] opacity-40 uppercase mb-1">Navigation Terminals</div>
+          
+          <div class="grid grid-cols-3 gap-2.5">
+            <!-- Button 1: Blog -->
+            <a 
+              href="http://blog.onyxaxis.org" 
+              target="_blank" 
+              rel="noopener" 
+              class="scramble-link group flex flex-col items-center justify-center py-3.5 px-2 border border-[var(--axis-color)] hover:border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] rounded transition-all duration-300"
+              data-text="BLOG"
+            >
+              <!-- Inline SVG: Book Open -->
+              <svg class="w-4 h-4 mb-1.5 opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+              <span class="font-mono-tech text-[10px] tracking-wider font-semibold link-label">Blog</span>
             </a>
-            
-            <!-- Link 02: Blog -->
-            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="http://blog.onyxaxis.org" target="_blank" rel="noopener" data-text="Blog">
-              <span class="flex items-center gap-4">
-                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">Blog</span>
-              </span>
-              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
+
+            <!-- Button 2: GitHub -->
+            <a 
+              href="https://github.com/OnyxAxisOwO" 
+              target="_blank" 
+              rel="noopener" 
+              class="scramble-link group flex flex-col items-center justify-center py-3.5 px-2 border border-[var(--axis-color)] hover:border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] rounded transition-all duration-300"
+              data-text="GITHUB"
+            >
+              <!-- Inline SVG: GitHub -->
+              <svg class="w-4 h-4 mb-1.5 opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                <path d="M9 18c-4.51 2-5-2-7-2"></path>
+              </svg>
+              <span class="font-mono-tech text-[10px] tracking-wider font-semibold link-label">GitHub</span>
             </a>
-            
-            <!-- Link 03: GitHub -->
-            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="https://github.com/OnyxAxisOwO" target="_blank" rel="noopener" data-text="GitHub">
-              <span class="flex items-center gap-4">
-                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">GitHub</span>
-              </span>
-              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
-            </a>
-            
-            <!-- Link 04: Telegram -->
-            <a class="scramble-link group flex justify-between items-center py-4 border-b border-[var(--axis-color)] hover:border-[var(--fg)] transition-all duration-300" href="https://t.me/onyxaxis" target="_blank" rel="noopener" data-text="Telegram">
-              <span class="flex items-center gap-4">
-                <span class="font-mono-tech font-medium uppercase tracking-widest text-sm link-label">Telegram</span>
-              </span>
-              <span class="text-xs font-mono-tech opacity-40 transform group-hover:translate-x-2 transition-transform">→</span>
+
+            <!-- Button 3: Telegram -->
+            <a 
+              href="https://t.me/onyxaxis" 
+              target="_blank" 
+              rel="noopener" 
+              class="scramble-link group flex flex-col items-center justify-center py-3.5 px-2 border border-[var(--axis-color)] hover:border-[var(--fg)] hover:bg-[var(--fg)] hover:text-[var(--bg)] rounded transition-all duration-300"
+              data-text="TELEGRAM"
+            >
+              <!-- Inline SVG: Send (Telegram) -->
+              <svg class="w-4 h-4 mb-1.5 opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              <span class="font-mono-tech text-[10px] tracking-wider font-semibold link-label">Telegram</span>
             </a>
           </div>
         </div>
-      </main>
+      </div>
 
-      <!-- Footer Stats Panel / Terminal Widget -->
-      <footer class="flex flex-col gap-3 border-t border-[var(--axis-color)] pt-4 text-[10px] font-mono-tech tracking-wider opacity-60">
+      <!-- Footer Telemetry -->
+      <footer class="flex flex-col gap-2.5 border-t border-[var(--axis-color)] pt-4 text-[9px] font-mono-tech tracking-wider opacity-50">
         <div class="flex justify-between items-center">
-          <span id="coord-display">COORD: (0.000, 0.000)</span>
-          <span class="text-right" id="fps-display">60 FPS // SYSTEM ONLINE</span>
+          <span id="time-display">SYS.TIME: 15:14:00 UTC</span>
+          <span id="fps-display">60 FPS // ENGAGE</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="font-serif-elegant text-base italic tracking-widest text-[var(--fg)] opacity-100">y = f(x)</span>
-          <span>© ONYAXIS. EST. 2026</span>
+          <span class="tracking-widest">ONYXAXIS PORTAL</span>
+          <span>© 2026 ONYAXIS</span>
         </div>
       </footer>
 
     </div>
 
-    <!-- Right Column: Interactive Canvas & Mathematical Control Deck -->
-    <div class="lg:col-span-7 flex flex-col justify-between h-full relative border border-[var(--axis-color)] bg-[rgba(18,18,16,0.2)] rounded-lg p-4 md:p-6 backdrop-blur-sm shadow-2xl">
+    <!-- Right Column: Projects Deck (我的项目) -->
+    <div class="lg:col-span-7 flex flex-col h-full justify-between z-20">
       
-      <!-- Live Dynamic Coordinate Canvas Card -->
-      <div class="relative w-full flex-grow rounded overflow-hidden flex items-center justify-center min-h-[300px] lg:min-h-0 bg-black/10">
-        
-        <!-- Canvas Element -->
-        <canvas id="axis-canvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
-        
-        <!-- High-tech Floating HUD elements inside Canvas -->
-        <div class="absolute top-4 left-4 bg-black/40 border border-[var(--axis-color)] px-3 py-1.5 rounded text-[10px] font-mono-tech tracking-widest text-[var(--fg)] backdrop-blur-md flex flex-col gap-0.5 pointer-events-none">
-          <div class="flex justify-between gap-4">
-            <span class="opacity-40">DOMAIN:</span>
-            <span>[-5.0, +5.0]</span>
-          </div>
-          <div class="flex justify-between gap-4">
-            <span class="opacity-40">RANGE:</span>
-            <span>[-1.5, +1.5]</span>
-          </div>
+      <!-- List Container Header -->
+      <div class="flex items-center justify-between border-b border-[var(--axis-color)] pb-3 mb-6">
+        <div class="flex items-center gap-3">
+          <!-- Inline SVG: Folder Git 2 -->
+          <svg class="w-4 h-4 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v5"></path><circle cx="13" cy="12" r="2"></circle><path d="M18 19c-2.2 0-3-1.7-3-1.7"></path><circle cx="20" cy="19" r="2"></circle></svg>
+          <h2 class="font-mono-tech text-xs tracking-[0.25em] uppercase font-semibold text-[var(--fg)]">
+            我的项目 // Projects
+          </h2>
         </div>
-
-        <div class="absolute bottom-4 right-4 bg-black/40 border border-[var(--axis-color)] px-3 py-1.5 rounded text-[10px] font-mono-tech tracking-widest text-[var(--fg)] backdrop-blur-md flex items-center gap-2 pointer-events-none">
-          <div class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span>GRID HARMONY DEEPENING</span>
-        </div>
-
-        <!-- Glowing Overlay on Hover point -->
-        <div id="canvas-glow-point" class="absolute w-12 h-12 rounded-full border border-amber-400/30 bg-amber-400/5 pointer-events-none transform -translate-x-1/2 -translate-y-1/2 hidden transition-all duration-75 blur-xs"></div>
+        <span class="font-mono-tech text-[10px] opacity-40">5 ACTIVE NODES</span>
       </div>
 
-      <!-- Real-Time Formula Command Input Box -->
-      <div class="mt-4 border-t border-[var(--axis-color)] pt-4">
-        <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center text-[10px] font-mono-tech tracking-wider opacity-60">
-            <span>DOCK: FORMULA PARSER</span>
-            <span id="syntax-error" class="text-rose-400 hidden">Syntax Error. Reverting.</span>
-            <span id="syntax-success" class="text-emerald-400">Equation compiled successfully</span>
+      <!-- Project Cards Stack -->
+      <div class="flex-grow space-y-4 overflow-y-auto pr-1 max-h-[72vh] lg:max-h-none">
+        
+        <!-- Project 1: OnyxAxis AI -->
+        <a 
+          href="https://ai.onyxaxis.ai" 
+          target="_blank" 
+          rel="noopener" 
+          class="premium-panel block p-5 rounded-lg border hover:translate-y-[-2px]"
+        >
+          <div class="flex justify-between items-start gap-4 mb-2">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                <!-- Inline SVG: Sparkles -->
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5 5 3Z"></path><path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z"></path></svg>
+              </div>
+              <h3 class="font-mono-tech text-sm font-semibold tracking-wide">OnyxAxis AI</h3>
+            </div>
+            <span class="text-xs font-mono-tech opacity-30 group-hover:opacity-100 transition-opacity">ai.onyxaxis.ai ↗</span>
           </div>
-          
-          <div class="relative flex items-center">
-            <span class="absolute left-4 font-mono-tech text-sm text-[var(--fg)] opacity-50">f(x) = </span>
-            <input 
-              id="formula-input" 
-              type="text" 
-              value="sin(x - t) * cos(x * 0.5)" 
-              class="w-full pl-16 pr-24 py-3 bg-[var(--bg)] border border-[var(--axis-color)] focus:border-[var(--fg)] rounded font-mono-tech text-xs tracking-wider text-[var(--fg)] focus:outline-none transition-all duration-300 shadow-inner"
-              placeholder="e.g. sin(x - t) * cos(3 * x)"
-            />
-            <button 
-              id="execute-formula" 
-              class="absolute right-2 px-3 py-1.5 bg-[var(--fg)] text-[var(--bg)] font-mono-tech text-[10px] uppercase tracking-wider rounded hover:opacity-90 active:scale-95 transition-all duration-200"
-            >
-              PLOT
-            </button>
+          <div class="space-y-2 pl-11">
+            <p class="text-[10px] font-mono-tech tracking-wider opacity-55 text-amber-500/80">
+              Claude Opus 4.8 · GPT-5.5 · Gemini 3.1 Pro
+            </p>
+            <p class="text-xs text-[var(--fg)] opacity-70 font-light leading-relaxed">
+              全球顶级大模型，一站集结，全部免费。
+            </p>
           </div>
-          
-          <div class="flex justify-between items-center text-[9px] font-mono-tech tracking-wide opacity-40 px-1">
-            <span>Allowed tokens: x (domain), t (time scalar), sin, cos, tan, abs, PI, pow</span>
-            <span>Press 'ENTER' to compute</span>
+        </a>
+
+        <!-- Project 2: Bouncer -->
+        <a 
+          href="https://bouncer-webui.pages.dev" 
+          target="_blank" 
+          rel="noopener" 
+          class="premium-panel block p-5 rounded-lg border hover:translate-y-[-2px]"
+        >
+          <div class="flex justify-between items-start gap-4 mb-2">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
+                <!-- Inline SVG: Shield Check -->
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+              </div>
+              <h3 class="font-mono-tech text-sm font-semibold tracking-wide">Bouncer</h3>
+            </div>
+            <span class="text-xs font-mono-tech opacity-30">bouncer-webui.pages.dev ↗</span>
           </div>
-        </div>
+          <div class="pl-11">
+            <p class="text-xs text-[var(--fg)] opacity-70 font-light leading-relaxed">
+              Open WebUI 流控、公告、权限、商业化，一站式开源工具。
+            </p>
+          </div>
+        </a>
+
+        <!-- Project 3: Veiled -->
+        <a 
+          href="https://github.com/OnyxAxisOwO/Veiled" 
+          target="_blank" 
+          rel="noopener" 
+          class="premium-panel block p-5 rounded-lg border hover:translate-y-[-2px]"
+        >
+          <div class="flex justify-between items-start gap-4 mb-2">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
+                <!-- Inline SVG: Eye Off -->
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+              </div>
+              <h3 class="font-mono-tech text-sm font-semibold tracking-wide">Veiled</h3>
+            </div>
+            <span class="text-xs font-mono-tech opacity-30">GitHub ↗</span>
+          </div>
+          <div class="pl-11">
+            <p class="text-xs text-[var(--fg)] opacity-70 font-light leading-relaxed">
+              隐身 AI 助手客户端，从安装到运行全程伪装为 Windows 系统显示驱动辅助工具。
+            </p>
+          </div>
+        </a>
+
+        <!-- Project 4: PageDye -->
+        <a 
+          href="https://github.com/OnyxAxisOwO/PageDye" 
+          target="_blank" 
+          rel="noopener" 
+          class="premium-panel block p-5 rounded-lg border hover:translate-y-[-2px]"
+        >
+          <div class="flex justify-between items-start gap-4 mb-2">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
+                <!-- Inline SVG: Palette -->
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.3441 19.4855 5.22857 20.3019 4.85857 20.8586C4.42857 21.5019 3.5 21.5 3 22H12Z"></path><circle cx="7.5" cy="10.5" r="1.5"></circle><circle cx="11.5" cy="7.5" r="1.5"></circle><circle cx="16.5" cy="9.5" r="1.5"></circle><circle cx="15.5" cy="14.5" r="1.5"></circle></svg>
+              </div>
+              <h3 class="font-mono-tech text-sm font-semibold tracking-wide">PageDye</h3>
+            </div>
+            <span class="text-xs font-mono-tech opacity-30">GitHub ↗</span>
+          </div>
+          <div class="pl-11">
+            <p class="text-xs text-[var(--fg)] opacity-70 font-light leading-relaxed">
+              一键换肤所有网页，兼容大部分网站，支持更换网页壁纸。
+            </p>
+          </div>
+        </a>
+
+        <!-- Project 5: ImmersiveProxy -->
+        <a 
+          href="https://github.com/OnyxAxisOwO/ImmersiveProxy" 
+          target="_blank" 
+          rel="noopener" 
+          class="premium-panel block p-5 rounded-lg border hover:translate-y-[-2px]"
+        >
+          <div class="flex justify-between items-start gap-4 mb-2">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded bg-neutral-500/10 border border-neutral-500/20 opacity-80">
+                <!-- Inline SVG: Languages -->
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"></path><path d="m4 14 6-6 2-3"></path><path d="M2 5h12"></path><path d="M7 2h1"></path><path d="m22 22-5-10-5 10"></path><path d="M14 18h6"></path></svg>
+              </div>
+              <h3 class="font-mono-tech text-sm font-semibold tracking-wide">ImmersiveProxy</h3>
+            </div>
+            <span class="text-xs font-mono-tech opacity-30">GitHub ↗</span>
+          </div>
+          <div class="pl-11">
+            <p class="text-xs text-[var(--fg)] opacity-70 font-light leading-relaxed">
+              将沉浸式翻译 API 逆向转换为 OpenAI 格式。
+            </p>
+          </div>
+        </a>
+
       </div>
 
     </div>
@@ -308,13 +421,13 @@
     })(window, document, "clarity", "script", "wi3kwthcvx");
   </script>
 
-  <!-- Core Interactive Script -->
+  <!-- Portal Core Javascript Engine -->
   <script>
     // Theme Management
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
 
-    // Check system preference
+    // Default to dark, check system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
       body.classList.add('theme-light');
     }
@@ -323,318 +436,187 @@
       body.classList.toggle('theme-light');
     });
 
-    // Custom Cursor tracking (desktop)
+    // Custom Interactive Desktop Pointer Tracking
     const cursor = document.getElementById('js-cursor');
     document.addEventListener('mousemove', (e) => {
       cursor.style.left = e.clientX + 'px';
       cursor.style.top = e.clientY + 'px';
     });
 
-    // Magnetic feedback triggers on links/buttons
-    const hoverables = document.querySelectorAll('a, button, input');
+    // Cursor micro-interactions on interactive components
+    const hoverables = document.querySelectorAll('a, button');
     hoverables.forEach(el => {
       el.addEventListener('mouseenter', () => {
-        cursor.style.width = '24px';
-        cursor.style.height = '24px';
-        cursor.style.backgroundColor = 'rgba(212, 175, 55, 0.4)';
+        cursor.style.width = '20px';
+        cursor.style.height = '20px';
+        cursor.style.backgroundColor = 'rgba(212, 175, 55, 0.3)';
       });
       el.addEventListener('mouseleave', () => {
-        cursor.style.width = '8px';
-        cursor.style.height = '8px';
+        cursor.style.width = '6px';
+        cursor.style.height = '6px';
         cursor.style.backgroundColor = 'var(--fg)';
       });
     });
 
     /* =========================================================================
-       CANVAS MATHEMATICAL ENGINE
+       SUBTLE AMBIENT INTERACTIVE "AXIS WEB" CANVAS (Particle Network)
        ========================================================================= */
-    const canvas = document.getElementById('axis-canvas');
+    const canvas = document.getElementById('ambient-canvas');
     const ctx = canvas.getContext('2d');
-    const coordDisplay = document.getElementById('coord-display');
-    const fpsDisplay = document.getElementById('fps-display');
-    const glowPoint = document.getElementById('canvas-glow-point');
 
-    let t = 0; // Mathematical Time Scalar
-    let formulaString = document.getElementById('formula-input').value;
-    let customFormulaFn = null;
-    let lastFrameTime = performance.now();
-    let fps = 60;
+    let particles = [];
+    let mouse = { x: null, y: null, radius: 60 };
 
-    // Grid properties
-    const domainX = 10; // -5 to +5 range
-    const rangeY = 3;   // -1.5 to +1.5 range
-
-    // Mouse coordinates in Mathematical Space
-    let mathMouseX = 0;
-    let mathMouseY = 0;
-    let isMouseOverCanvas = false;
-
-    // Handle Resize dynamically to protect layout resolution
     function resizeCanvas() {
       const container = canvas.parentElement;
       canvas.width = container.clientWidth * window.devicePixelRatio;
       canvas.height = container.clientHeight * window.devicePixelRatio;
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // Map math coordinates (-5, 5) to Canvas relative pixel positions
-    function toCanvasCoords(mx, my) {
-      const w = canvas.width / window.devicePixelRatio;
-      const h = canvas.height / window.devicePixelRatio;
-
-      // Map mx from [-5, 5] to [0, w]
-      const px = ((mx + 5) / domainX) * w;
-      // Map my from [-1.5, 1.5] to [h, 0] (y is inverted in screen space)
-      const py = h - ((my + 1.5) / rangeY) * h;
-
-      return { x: px, y: py };
+      initParticles();
     }
 
-    // Map Screen Pixel positions back to Mathematical space coordinates
-    function toMathCoords(px, py) {
-      const w = canvas.width / window.devicePixelRatio;
-      const h = canvas.height / window.devicePixelRatio;
+    class Particle {
+      constructor(w, h) {
+        this.w = w;
+        this.h = h;
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.vx = (Math.random() - 0.5) * 0.25;
+        this.vy = (Math.random() - 0.5) * 0.25;
+        this.radius = Math.random() * 1.5 + 1;
+      }
 
-      const mx = (px / w) * domainX - 5;
-      const my = ((h - py) / h) * rangeY - 1.5;
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
 
-      return { x: mx, y: my };
-    }
+        if (this.x < 0 || this.x > this.w) this.vx = -this.vx;
+        if (this.y < 0 || this.y > this.h) this.vy = -this.vy;
 
-    // Safe mathematical evaluation compiler
-    function compileFormula(rawStr) {
-      // Sanitize inputs and parse mathematical shorthand to valid JS
-      let processed = rawStr
-        .replace(/sin/g, 'Math.sin')
-        .replace(/cos/g, 'Math.cos')
-        .replace(/tan/g, 'Math.tan')
-        .replace(/abs/g, 'Math.abs')
-        .replace(/PI/g, 'Math.PI')
-        .replace(/pow/g, 'Math.pow')
-        .replace(/sqrt/g, 'Math.sqrt');
+        // Attract marginally to cursor
+        if (mouse.x !== null && mouse.y !== null) {
+          let dx = mouse.x - this.x;
+          let dy = mouse.y - this.y;
+          let dist = Math.hypot(dx, dy);
+          if (dist < mouse.radius) {
+            this.x += dx * 0.01;
+            this.y += dy * 0.01;
+          }
+        }
+      }
 
-      try {
-        // Create an explicit sandbox execution mathematical function
-        const fn = new Function('x', 't', `try { return ${processed}; } catch(e) { return 0; }`);
-        // Test compile run
-        const test = fn(1, 1);
-        if (isNaN(test)) throw new Error("Resulting value is NaN");
-        
-        document.getElementById('syntax-error').classList.add('hidden');
-        document.getElementById('syntax-success').classList.remove('hidden');
-        return fn;
-      } catch (err) {
-        document.getElementById('syntax-error').classList.remove('hidden');
-        document.getElementById('syntax-success').classList.add('hidden');
-        return null;
+      draw(color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
-    // Initialize custom formula compile
-    customFormulaFn = compileFormula(formulaString);
-
-    // Watch Preset buttons morphing
-    const presetButtons = document.querySelectorAll('.preset-btn');
-    presetButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        presetButtons.forEach(b => b.classList.remove('border-amber-400', 'active'));
-        btn.classList.add('border-amber-400', 'active');
-        const targetFormula = btn.getAttribute('data-formula');
-        document.getElementById('formula-input').value = targetFormula;
-
-        const compiled = compileFormula(targetFormula);
-        if (compiled) customFormulaFn = compiled;
-      });
-    });
-
-    // Execute custom formula inputs
-    document.getElementById('execute-formula').addEventListener('click', () => {
-      const val = document.getElementById('formula-input').value;
-      const compiled = compileFormula(val);
-      if (compiled) customFormulaFn = compiled;
-    });
-
-    document.getElementById('formula-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        const val = document.getElementById('formula-input').value;
-        const compiled = compileFormula(val);
-        if (compiled) customFormulaFn = compiled;
+    function initParticles() {
+      const w = canvas.width / window.devicePixelRatio;
+      const h = canvas.height / window.devicePixelRatio;
+      particles = [];
+      const density = Math.floor((w * h) / 1200);
+      for (let i = 0; i < Math.min(density, 40); i++) {
+        particles.push(new Particle(w, h));
       }
-    });
+    }
 
-    // Tracking Mouse across grid
+    // Dynamic hover feedback on ambient card
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
-      const clientX = e.clientX - rect.left;
-      const clientY = e.clientY - rect.top;
-
-      const math = toMathCoords(clientX, clientY);
-      mathMouseX = math.x;
-      mathMouseY = math.y;
-      isMouseOverCanvas = true;
-
-      // Update interactive HTML Glow tracker
-      glowPoint.style.left = `${clientX}px`;
-      glowPoint.style.top = `${clientY}px`;
-      glowPoint.classList.remove('hidden');
-
-      // Coordinate Display readouts
-      coordDisplay.innerText = `COORD: (${mathMouseX.toFixed(3)}, ${mathMouseY.toFixed(3)})`;
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
     });
 
     canvas.addEventListener('mouseleave', () => {
-      isMouseOverCanvas = false;
-      glowPoint.classList.add('hidden');
-      coordDisplay.innerText = `COORD: (0.000, 0.000)`;
+      mouse.x = null;
+      mouse.y = null;
     });
 
-    // Mobile Dynamic Touch Vector adaptation
-    canvas.addEventListener('touchmove', (e) => {
-      if (e.touches.length > 0) {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches[0].clientX - rect.left;
-        const clientY = e.touches[0].clientY - rect.top;
-        const math = toMathCoords(clientX, clientY);
-        mathMouseX = math.x;
-        mathMouseY = math.y;
-        isMouseOverCanvas = true;
-        coordDisplay.innerText = `COORD: (${mathMouseX.toFixed(3)}, ${mathMouseY.toFixed(3)})`;
-      }
-    }, { passive: true });
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-    /* =========================================================================
-       MAIN PHYSICS & ANIMATION LOOP
-       ========================================================================= */
+    // Animation frames variables
+    let lastTime = performance.now();
+    let fps = 60;
+    const fpsDisplay = document.getElementById('fps-display');
+    const timeDisplay = document.getElementById('time-display');
+
+    function updateTimeDisplay() {
+      const now = new Date();
+      const timeStr = now.toUTCString().slice(17, 25);
+      timeDisplay.innerText = `SYS.TIME: ${timeStr} UTC`;
+    }
+
     function animate() {
       const w = canvas.width / window.devicePixelRatio;
       const h = canvas.height / window.devicePixelRatio;
+      ctx.clearRect(0, 0, w, h);
 
-      // Clear Screen with extremely slight trace persistence for smooth motions
+      // Adaptable styles
       const themeLight = body.classList.contains('theme-light');
-      ctx.fillStyle = themeLight ? 'rgba(245, 243, 238, 0.85)' : 'rgba(12, 12, 10, 0.85)';
-      ctx.fillRect(0, 0, w, h);
+      const pointColor = themeLight ? 'rgba(18, 18, 16, 0.45)' : 'rgba(244, 244, 240, 0.45)';
+      const lineColor = themeLight ? 'rgba(18, 18, 16, 0.08)' : 'rgba(244, 244, 240, 0.08)';
+      const hoverLineColor = themeLight ? 'rgba(184, 134, 11, 0.2)' : 'rgba(212, 175, 55, 0.25)';
 
-      // Core Dynamic Grid Drawing Engine
-      const gridStyles = getComputedStyle(document.documentElement);
-      const gridColor = gridStyles.getPropertyValue('--grid-color').trim();
-      const axisColor = gridStyles.getPropertyValue('--axis-color').trim();
-      const fgColor = gridStyles.getPropertyValue('--fg').trim();
+      // Draw Connection lines (Axis Matrix)
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw(pointColor);
 
-      ctx.strokeStyle = gridColor;
-      ctx.lineWidth = 1;
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.hypot(dx, dy);
 
-      // Generate fine Cartesian vertical subgrid lines
-      for (let i = -5; i <= 5; i += 0.5) {
-        const p = toCanvasCoords(i, 0);
-        ctx.beginPath();
-        ctx.moveTo(p.x, 0);
-        ctx.lineTo(p.x, h);
-        ctx.stroke();
-      }
-
-      // Generate fine Cartesian horizontal subgrid lines
-      for (let i = -1.5; i <= 1.5; i += 0.25) {
-        const p = toCanvasCoords(0, i);
-        ctx.beginPath();
-        ctx.moveTo(0, p.y);
-        ctx.lineTo(w, p.y);
-        ctx.stroke();
-      }
-
-      // Main Axis Origin lines
-      ctx.strokeStyle = axisColor;
-      ctx.lineWidth = 1.5;
-
-      // X-Axis
-      const origin = toCanvasCoords(0, 0);
-      ctx.beginPath();
-      ctx.moveTo(0, origin.y);
-      ctx.lineTo(w, origin.y);
-      ctx.stroke();
-
-      // Y-Axis
-      ctx.beginPath();
-      ctx.moveTo(origin.x, 0);
-      ctx.lineTo(origin.x, h);
-      ctx.stroke();
-
-      // Plot dynamic mathematical curves
-      if (customFormulaFn) {
-        ctx.beginPath();
-        ctx.lineWidth = 2.5;
-        ctx.strokeStyle = themeLight ? '#121210' : '#ffffff';
-
-        let firstPoint = true;
-        
-        // Sampling dense geometric increments for ultra-high-resolution lines
-        for (let mx = -5; mx <= 5; mx += 0.02) {
-          try {
-            const my = customFormulaFn(mx, t);
-            if (!isNaN(my) && isFinite(my)) {
-              const canvasPos = toCanvasCoords(mx, my);
-              if (firstPoint) {
-                ctx.moveTo(canvasPos.x, canvasPos.y);
-                firstPoint = false;
-              } else {
-                ctx.lineTo(canvasPos.x, canvasPos.y);
-              }
-            }
-          } catch(e) {}
-        }
-        ctx.stroke();
-
-        // Compute intersecting hover tracking nodes
-        if (isMouseOverCanvas) {
-          try {
-            const trackingY = customFormulaFn(mathMouseX, t);
-            const targetPos = toCanvasCoords(mathMouseX, trackingY);
-
-            // Glowing Tracking Orb
-            ctx.fillStyle = themeLight ? '#b8860b' : '#f59e0b';
+          if (dist < 45) {
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 0.5;
             ctx.beginPath();
-            ctx.arc(targetPos.x, targetPos.y, 6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Trace dashed helper axis lines directly back to origin
-            ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
-            ctx.setLineDash([4, 4]);
-            ctx.lineWidth = 1;
-            
-            ctx.beginPath();
-            ctx.moveTo(targetPos.x, targetPos.y);
-            ctx.lineTo(targetPos.x, origin.y);
-            ctx.moveTo(targetPos.x, targetPos.y);
-            ctx.lineTo(origin.x, targetPos.y);
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
-            ctx.setLineDash([]); // reset dash
-          } catch(e) {}
+          }
+        }
+
+        // Draw connections to mouse
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = particles[i].x - mouse.x;
+          const dy = particles[i].y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < mouse.radius) {
+            ctx.strokeStyle = hoverLineColor;
+            ctx.lineWidth = 0.75;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.stroke();
+          }
         }
       }
 
-      // Dynamic Mathematical Time step
-      t += 0.02;
-
-      // Calculate Performance Stats
+      // Calculate simple FPS and update digital UTC Clock
       const now = performance.now();
-      fps = Math.round(1000 / (now - lastFrameTime));
-      lastFrameTime = now;
-      if (Math.random() < 0.05) { // Slow down display updates for steady legibility
+      fps = Math.round(1000 / (now - lastTime));
+      lastTime = now;
+      
+      if (Math.random() < 0.03) {
         fpsDisplay.innerText = `${fps} FPS // SYSTEM ACTIVE`;
+        updateTimeDisplay();
       }
 
       requestAnimationFrame(animate);
     }
 
-    // Trigger on Load
-    window.onload = function () {
+    // Trigger on document load
+    window.onload = function() {
       animate();
-      lucide.createIcons();
     };
 
     /* =========================================================================
-       TEXT SCRAMBLE ANIMATION (For personalized high-end portal identity)
+       TEXT SCRAMBLE INTERACTIVE ENGINE (High-end hovering aesthetics)
        ========================================================================= */
     class TextScrambler {
       constructor(el) {
@@ -650,8 +632,8 @@
         for (let i = 0; i < this.newText.length; i++) {
           const from = this.oldText[i] || '';
           const to = this.newText[i] || '';
-          const start = Math.floor(Math.random() * 10);
-          const end = start + Math.floor(Math.random() * 15);
+          const start = Math.floor(Math.random() * 8);
+          const end = start + Math.floor(Math.random() * 12);
           this.queue.push({ from, to, start, end, char: '' });
         }
         cancelAnimationFrame(this.frameId);
@@ -690,7 +672,7 @@
       }
     }
 
-    // Apply the scramble effect to portal links
+    // Bind scrambler effect to navigation tabs
     document.querySelectorAll('.scramble-link').forEach(link => {
       const label = link.querySelector('.link-label');
       const originalText = label.innerText;
@@ -705,7 +687,6 @@
         scrambler.setText(originalText);
       });
     });
-
   </script>
 </body>
 </html>
